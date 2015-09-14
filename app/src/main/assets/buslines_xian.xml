@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<buslines>
+	<busline>
+		<linenum>328</linenum>
+		<starttime>6:00</starttime>
+		<endtime>23:00</endtime>
+		<price>8</price>
+		<isfavor>true</isfavor>
+		<favorstation>4</favorstation>
+		<stations>
+<station><id>1</id><name>东门</name><longitude>108.977843 </longitude><latitude>34.266265 </latitude><altitude>404.871144 </altitude><speed>46.292746 </speed><remaintime>59</remaintime></station>
+<station><id>2</id><name>大差市</name><longitude>108.970688 </longitude><latitude>34.265795 </latitude><altitude>411.472230 </altitude><speed>42.834149 </speed><remaintime>57</remaintime></station>
+<station><id>3</id><name>端履门</name><longitude>108.962931 </longitude><latitude>34.265948 </latitude><altitude>398.411268 </altitude><speed>44.210485 </speed><remaintime>55</remaintime></station>
+<station><id>4</id><name>钟楼(东)</name><longitude>108.954896 </longitude><latitude>34.265792 </latitude><altitude>425.378901 </altitude><speed>44.829635 </speed><remaintime>52</remaintime></station>
+<station><id>5</id><name>南门</name><longitude>108.949771 </longitude><latitude>34.257169 </latitude><altitude>409.903804 </altitude><speed>40.906819 </speed><remaintime>50</remaintime></station>
+<station><id>6</id><name>朱雀门</name><longitude>108.945536 </longitude><latitude>34.255733 </latitude><altitude>414.742714 </altitude><speed>43.998727 </speed><remaintime>48</remaintime></station>
+<station><id>7</id><name>西后地</name><longitude>108.945482 </longitude><latitude>34.250720 </latitude><altitude>410.290379 </altitude><speed>44.791003 </speed><remaintime>46</remaintime></station>
+<station><id>8</id><name>小雁塔</name><longitude>108.945486 </longitude><latitude>34.248266 </latitude><altitude>407.891401 </altitude><speed>44.433467 </speed><remaintime>43</remaintime></station>
+<station><id>9</id><name>黄雁村</name><longitude>108.937927 </longitude><latitude>34.247281 </latitude><altitude>403.651153 </altitude><speed>46.031857 </speed><remaintime>40</remaintime></station>
+<station><id>10</id><name>边家村</name><longitude>108.930974 </longitude><latitude>34.247128 </latitude><altitude>402.169874 </altitude><speed>47.083617 </speed><remaintime>35</remaintime></station>
+<station><id>11</id><name>西工大</name><longitude>108.924327 </longitude><latitude>34.247001 </latitude><altitude>411.762756 </altitude><speed>46.985259 </speed><remaintime>30</remaintime></station>
+<station><id>12</id><name>劳动南路</name><longitude>108.918959 </longitude><latitude>34.246941 </latitude><altitude>397.961275 </altitude><speed>43.010643 </speed><remaintime>28</remaintime></station>
+<station><id>13</id><name>光华路</name><longitude>108.914041 </longitude><latitude>34.241674 </latitude><altitude>405.593146 </altitude><speed>45.835372 </speed><remaintime>25</remaintime></station>
+<station><id>14</id><name>高新路</name><longitude>108.912253 </longitude><latitude>34.238977 </latitude><altitude>425.769962 </altitude><speed>41.277666 </speed><remaintime>20</remaintime></station>
+<station><id>15</id><name>高新一中</name><longitude>108.908876 </longitude><latitude>34.233762 </latitude><altitude>413.872443 </altitude><speed>47.190743 </speed><remaintime>17</remaintime></station>
+<station><id>16</id><name>科技二路中段</name><longitude>108.904551 </longitude><latitude>34.229946 </latitude><altitude>401.227082 </altitude><speed>43.810778 </speed><remaintime>14</remaintime></station>
+<station><id>17</id><name>枫叶苑</name><longitude>108.900939 </longitude><latitude>34.231430 </latitude><altitude>414.780516 </altitude><speed>44.015728 </speed><remaintime>10</remaintime></station>
+<station><id>18</id><name>高新一中高中部</name><longitude>108.897256 </longitude><latitude>34.231430 </latitude><altitude>423.795172 </altitude><speed>46.704029 </speed><remaintime>6</remaintime></station>
+<station><id>19</id><name>清华科技园</name><longitude>108.891974 </longitude><latitude>34.231468 </latitude><altitude>417.155983 </altitude><speed>43.756883 </speed><remaintime>3</remaintime></station>
+<station><id>20</id><name>西安软件园</name><longitude>108.889243 </longitude><latitude>34.231445 </latitude><altitude>415.877356 </altitude><speed>46.074840 </speed><remaintime>0</remaintime></station>
+		</stations>
+	</busline>
+</buslines>
