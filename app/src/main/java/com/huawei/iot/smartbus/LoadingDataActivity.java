@@ -10,15 +10,19 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.huawei.iot.smartbus.service.AddInstanceService;
+import com.huawei.iot.smartbus.service.BaseUploadService;
 import com.huawei.iot.smartbus.service.PostDataService;
 import com.huawei.iot.smartbus.service.PostGPSService;
 import com.huawei.iot.smartbus.data.Constants;
 import com.huawei.iot.smartbus.model.Bus;
 import com.huawei.iot.smartbus.model.BusLine;
+import com.huawei.iot.smartbus.service.ServiceFactory;
 import com.huawei.iot.smartbus.utils.BusUtil;
 import com.huawei.iot.smartbus.utils.DeviceUtil;
 import com.huawei.iot.smartbus.utils.FileUtil;
@@ -34,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class LoadingDataActivity extends Activity {
+public class LoadingDataActivity extends Activity implements View.OnClickListener {
 
     private static final String TAG = "LoadingDataActivity";
     private TextView tv_show;
@@ -44,6 +48,8 @@ public class LoadingDataActivity extends Activity {
     private String dataTypeId = null;
     private String busLineNum = null;
     private BusLine currentBusLine = null;
+    private Button bt_add_device;
+    private Button bt_pause_upload;
 
     @Override
     protected void onDestroy() {
@@ -53,7 +59,7 @@ public class LoadingDataActivity extends Activity {
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "MyTag");
 //在释放之前，屏幕一直亮着（有可能会变暗,但是还可以看到屏幕内容,换成PowerManager.SCREEN_BRIGHT_WAKE_LOCK不会变暗）
         wl.release();
-        PostDataService.flag = false;
+        ServiceFactory.getInstance().dismissService();
     }
 
     @Override
@@ -63,11 +69,17 @@ public class LoadingDataActivity extends Activity {
         setContentView(R.layout.activity_loading_data);
         context = this;
         tv_show = (TextView) findViewById(R.id.tv_showing);
-        tv_show.setText("Service is starting...\n");
+        bt_add_device = (Button) findViewById(R.id.bt_add_device);
+        bt_pause_upload = (Button) findViewById(R.id.bt_load_pause);
+        bt_add_device.setEnabled(false);
+        bt_pause_upload.setEnabled(false);
+        bt_add_device.setOnClickListener(this);
+        bt_pause_upload.setOnClickListener(this);
         Intent intent = getIntent();
         dataTypeId = intent.getStringExtra("DeviceTypeID");
         busLineNum = intent.getStringExtra("BusLineNum");
         if (null != intent.getStringExtra("Method")) {
+            tv_show.setText("GPS datas is uploading...");
             isDevice = true;
             GPSUtil.registerGPS(context);
         }
@@ -84,23 +96,10 @@ public class LoadingDataActivity extends Activity {
         TelephonyManager tm = (TelephonyManager)this.getSystemService(TELEPHONY_SERVICE);
         if(null == SimUtil.readSIMID(tm)){
             tv_show.setText("SIM card is not available.");
+            bt_add_device.setEnabled(false);
         }else{
-            //get the current busline
-            List<BusLine> busLines = FileUtil.getBusLineFromXml(this.getAssets(), FileUtil.FILE_BUSLINE);
-            for (BusLine busLine : busLines){
-                if(busLineNum.equals(busLine.getLineNum())){
-                    currentBusLine = busLine;
-                    break;
-                }
-            }
-            Map<String, String> deviceData = new HashMap<String, String>();
-            deviceData.put(Constants.DEVICE_TYPE_ID, dataTypeId);
-            deviceData.put(Constants.MASTER_KEY, dataTypeId);
-            deviceData.put(Constants.BUSLINENUM, busLineNum);
-            deviceData.put(Constants.SIM_CARD_ID, SimUtil.readSIMID(tm));
-            List<Bus> buses = BusUtil.fromFiles(context, deviceData);
-            Log.i(TAG, "Bus list : " + buses);
-            AddInstanceService.startAddInstances(handler, buses);
+            bt_add_device.setEnabled(true);
+            tv_show.setText("Please touch the buttons.\n");
         }
     }
 
@@ -161,14 +160,16 @@ public class LoadingDataActivity extends Activity {
             if ("0".equals(datas.get("code"))) {
                 if (null != datas.get("data") && Constants.DEVICE_STATUS_OFFLINE.equals(datas.get("data"))) {
                     Log.i(TAG,"Device status --> offline");
-                        PostDataService.flag = false;
+                    //PostDataService.flag = false;
+                    BaseUploadService.cancel = true;
                         sb_status.append("The device is now offline.\n");
                         sb_status.append("Stopping post datas...\n");
                         sb_status.append("Stopped post datas...\n");
                         tv_show.setText(sb_status);
                 } else if (null != datas.get("data") && Constants.DEVICE_STATUS_DISABLE.equals(datas.get("data"))) {
                     Log.i(TAG,"Device status --> disable");
-                    PostDataService.flag = false;
+                    //PostDataService.flag = false;
+                    BaseUploadService.cancel = true;
                     sb_status.append("The device is now disabled.\n");
                     sb_status.append("Stopping post datas...\n");
                     sb_status.append("Stopped post datas...\n");
@@ -179,12 +180,14 @@ public class LoadingDataActivity extends Activity {
                     sb_status.append("The device will " + operate + ".\n");
                     if(Constants.OPERATION_RESTART.equals(operate)){
                         Log.i(TAG,"Device status --> restart");
-                        PostDataService.flag = false;
+                        //PostDataService.flag = false;
+                        BaseUploadService.cancel = true;
                         sb_status.append("The device is " + operate + "ing.\n");
                         restartApplication();
                     }else if(Constants.OPERATION_POWEROFF.equals(operate)){
                         Log.i(TAG,"Device status --> poweroff");
-                        PostDataService.flag = false;
+                        //PostDataService.flag = false;
+                        BaseUploadService.cancel = true;
                         sb_status.append("The device is " + operate + "ing.\n");
                         finish();
                     }else{
@@ -273,7 +276,11 @@ public class LoadingDataActivity extends Activity {
 
         try {
             JSONObject datas = new JSONObject(data);
-
+            if (data.contains("Endpoint request timed out")) {
+                sb_status.append("The device is added timeout.\n");
+                tv_show.setText(sb_status);
+                return;
+            }
             //failed
             if ("0".equals(datas.getString("code"))) {
                 if (Constants.NO_TYPE.equals(datas.getString("data"))) {
@@ -287,11 +294,9 @@ public class LoadingDataActivity extends Activity {
                         && Constants.ALREADY_EXIST.equals(datas.get("data"))) {
                     deviceID = (String) datas.get("description");
                     sb_status.append("Device is attached to server already.\n");
-                    sb_status.append("Starting loading datas...\n");
                     tv_show.setText(sb_status);
                 } else if (null != datas.get("data")) {
                     sb_status.append("Device is attached to server.\n");
-                    sb_status.append("Starting loading datas...\n");
                     tv_show.setText(sb_status);
                     JSONObject jsonData =  new JSONObject(datas.get("data").toString());
                     deviceID = jsonData.getString(Constants.DEVICE_ID);
@@ -301,10 +306,12 @@ public class LoadingDataActivity extends Activity {
                         + dataTypeId + ",isDevice-->"+ isDevice + ",positionId -->" + positionId);
                 if (!isDevice) {
                     mDataList = DeviceUtil.collectDatas(context,deviceID,dataTypeId, positionId);
+                    bt_pause_upload.setEnabled(true);
                     Log.i(TAG, "list -->" + mDataList);
                     if(!deviceIds.contains(deviceID)){
                         deviceIds.add(deviceID);
-                        new Thread(new PostDataService(handler,mDataList)).start();
+                        //new Thread(new PostDataService(handler,mDataList)).start();
+                        ServiceFactory.getInstance().add2Service(handler, mDataList);
                     }
 
                 }else{
@@ -338,4 +345,49 @@ public class LoadingDataActivity extends Activity {
 //在释放之前，屏幕一直亮着（有可能会变暗,但是还可以看到屏幕内容,换成PowerManager.SCREEN_BRIGHT_WAKE_LOCK不会变暗）
         wl.release();
     }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.bt_add_device:
+                //get the current busline
+                TelephonyManager tm = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+                List<BusLine> busLines = FileUtil.getBusLineFromXml(this.getAssets(), FileUtil.FILE_BUSLINE);
+                for (BusLine busLine : busLines) {
+                    if (busLineNum.equals(busLine.getLineNum())) {
+                        currentBusLine = busLine;
+                        break;
+                    }
+                }
+                Map<String, String> deviceData = new HashMap<String, String>();
+                deviceData.put(Constants.DEVICE_TYPE_ID, dataTypeId);
+                deviceData.put(Constants.MASTER_KEY, dataTypeId);
+                deviceData.put(Constants.BUSLINENUM, busLineNum);
+                deviceData.put(Constants.SIM_CARD_ID, SimUtil.readSIMID(tm));
+                List<Bus> buses = BusUtil.fromFiles(context, deviceData);
+                Log.i(TAG, "Bus list : " + buses);
+                AddInstanceService.startAddInstances(handler, buses);
+                bt_pause_upload.setEnabled(true);
+                break;
+            case R.id.bt_load_pause:
+                //判断此时上传线程状态
+                if (!ServiceFactory.getInstance().isStarted) {
+                    ServiceFactory.getInstance().startUploadService();
+                    bt_pause_upload.setText(R.string.pause_upload);
+                    return;
+                }
+                if (ServiceFactory.getInstance().isSuspend) {
+                    ServiceFactory.getInstance().continueUploadService();
+                    bt_pause_upload.setText(R.string.pause_upload);
+                } else {
+                    ServiceFactory.getInstance().suspendUploadService();
+                    bt_pause_upload.setText(R.string.continue_upload);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
 }

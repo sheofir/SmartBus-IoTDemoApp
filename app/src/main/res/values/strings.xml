@@ -5,4 +5,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_loading_data">LoadingDataActivity</string>
     <string name="title_activity_loading_real_data">LoadingRealData</string>
+    <string name="pause_upload">Pause</string>
+    <string name="continue_upload">Continue</string>
 </resources>

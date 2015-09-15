@@ -6,6 +6,7 @@ package com.huawei.iot.smartbus.service;
 public abstract class BaseUploadService extends Thread{
     boolean suspend = false;
     String control = "";
+    public static boolean cancel = false;
     public boolean isSuspend() {
         return suspend;
     }
@@ -20,18 +21,7 @@ public abstract class BaseUploadService extends Thread{
     }
 
     public void run() {
-        while (true) {
-            synchronized (control) {
-                if (suspend) {
-                    try {
-                        control.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            this.runPersonelLogic();
-        }
+        runPersonelLogic();
     }
     protected abstract void runPersonelLogic();
 }

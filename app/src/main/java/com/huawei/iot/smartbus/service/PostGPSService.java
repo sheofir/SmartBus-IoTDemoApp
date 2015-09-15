@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Created by sylar on 2015/8/29.
  */
-public class PostGPSService implements Runnable {
+public class PostGPSService extends BaseUploadService {
     private static final String TAG = "PostGPSService";
     private Handler handler;
     private Context context;
@@ -33,31 +33,29 @@ public class PostGPSService implements Runnable {
     }
 
     @Override
-    public void run() {
-        while(PostDataService.flag) {
-            String getResult = null;
-            try {
-                getResult = postGPSInstance();
-            } catch (Exception e) {
-                Log.e(TAG, "catch exception e: " + e);
-            }
-            if(null == getResult){
-                PostDataService.flag = false;
-                Log.e(TAG, "Can't get location" );
-                return;
-            }
-            Message msg = handler.obtainMessage(Constants.MSG_LOAD_DATA);
-            Bundle data = new Bundle();
-            data.putString("value", getResult);
-            msg.setData(data);
-            handler.sendMessage(msg);
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    protected void runPersonelLogic() {
+        String getResult = null;
+        try {
+            getResult = postGPSInstance();
+        } catch (Exception e) {
+            Log.e(TAG, "catch exception e: " + e);
+        }
+        if (null == getResult) {
+            Log.e(TAG, "Can't get location");
+            return;
+        }
+        Message msg = handler.obtainMessage(Constants.MSG_LOAD_DATA);
+        Bundle data = new Bundle();
+        data.putString("value", getResult);
+        msg.setData(data);
+        handler.sendMessage(msg);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
+
     private String postGPSInstance() throws Exception {
         Location location = GPSUtil.registerGPS(context);
         if (null != location) {

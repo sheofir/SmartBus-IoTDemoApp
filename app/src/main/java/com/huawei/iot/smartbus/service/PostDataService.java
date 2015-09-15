@@ -18,21 +18,31 @@ import java.util.Map;
 /**
  * Created by sylar on 2015/8/29.
  */
-public class PostDataService implements Runnable {
+public class PostDataService extends BaseUploadService {
     private static final String TAG = "PostDataService";
     private List<Map<String, Object>> list;
     private Handler handler;
-    public static boolean flag = true;
-    private int index = 0;
     public PostDataService(Handler handler, List<Map<String, Object>> list) {
         this.handler = handler;
         this.list = list;
     }
 
     @Override
-    public void run() {
-        while (flag && index < list.size()) {
-            Map<String, Object> map = list.get(index);
+    protected void runPersonelLogic() {
+        if (cancel) {
+            return;
+        }
+        for (int i = 0; i < list.size(); i++) {
+            synchronized (control) {
+                if (suspend) {
+                    try {
+                        control.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            Map<String, Object> map = list.get(i);
             Log.i(TAG, "Thread is running. map : " + map);
             String getResult = null;
             try {
@@ -51,10 +61,9 @@ public class PostDataService implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            index ++;
-
         }
     }
+
     private String postDatas(Map<String, Object> map) throws Exception {
         Log.i(TAG, "input datas : " + map.toString());
         String result = HttpsUtils.requestPostHTTPSPage(new URL(NetConstants.URL_POST_DATA), new JSONObject(map).toString());

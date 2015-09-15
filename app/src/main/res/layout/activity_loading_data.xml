@@ -17,4 +17,25 @@
             android:scrollbarFadeDuration="2000"/>
     </ScrollView>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/bt_add_device"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Add Devices" />
+
+        <Button
+            android:id="@+id/bt_load_pause"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Upload Datas" />
+    </LinearLayout>
+
 </RelativeLayout>
