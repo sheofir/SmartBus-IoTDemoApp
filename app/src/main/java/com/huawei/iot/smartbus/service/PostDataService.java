@@ -29,10 +29,10 @@ public class PostDataService extends BaseUploadService {
 
     @Override
     protected void runPersonelLogic() {
-        if (cancel) {
-            return;
-        }
         for (int i = 0; i < list.size(); i++) {
+            if (cancel) {
+                return;
+            }
             synchronized (control) {
                 if (suspend) {
                     try {
