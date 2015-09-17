@@ -7,21 +7,20 @@
     tools:context="com.huawei.iot.smartbus.LoadingDataActivity">
 
     <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/linearLayout">
         <TextView android:id="@+id/tv_showing"
-            android:text="@string/hello_world" android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbarFadeDuration="2000"/>
+            android:text="@string/hello_world"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </ScrollView>
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:id="@+id/linearLayout">
 
         <Button
             android:id="@+id/bt_add_device"

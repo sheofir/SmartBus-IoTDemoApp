@@ -123,10 +123,6 @@ public class LoadingDataActivity extends Activity implements View.OnClickListene
                     Log.i(TAG, "handle message to load data");
                     Bundle data1 = msg.getData();
                     String dataStreams = data1.getString("value");
-                    Log.i(TAG, "c" + dataStreams);
-                    if (null == dataStreams)
-                        break;
-                    // TODO
                     writeDataStatus(dataStreams);
                     break;
                 case Constants.MSG_LOAD_EMPTY_DATA:
@@ -149,34 +145,40 @@ public class LoadingDataActivity extends Activity implements View.OnClickListene
     };
 
     private void writeEmptyDataStatus(String dataStreams2) {
-        sb_status.append("The Bus is now running...\n");
-        tv_show.setText(sb_status);
+        tv_show.append("The Bus is now running...\n");
     }
 
     private void writeDataStatus(String dataStreams) {
+        if (null == dataStreams) {
+            return;
+        }
         try {
+            Log.i(TAG, "received data streams -->" + dataStreams);
             JSONObject datas = new JSONObject(dataStreams);
+            if (dataStreams.contains("Endpoint request timed out")) {
+                tv_show.append("Data uploading timeout.\n");
+                return;
+            }
             //failed
             if ("0".equals(datas.get("code"))) {
                 if (null != datas.get("data") && Constants.DEVICE_STATUS_OFFLINE.equals(datas.get("data"))) {
-                    Log.i(TAG,"Device status --> offline");
+                    Log.i(TAG, "Device status --> offline");
                     //PostDataService.flag = false;
                     BaseUploadService.cancel = true;
-                        sb_status.append("The device is now offline.\n");
-                        sb_status.append("Stopping post datas...\n");
-                        sb_status.append("Stopped post datas...\n");
-                        tv_show.setText(sb_status);
+                    tv_show.append("The device is now offline.\n"
+                            + "Stopping post datas...\n"
+                            + "Stopped post datas...\n");
                 } else if (null != datas.get("data") && Constants.DEVICE_STATUS_DISABLE.equals(datas.get("data"))) {
-                    Log.i(TAG,"Device status --> disable");
+                    Log.i(TAG, "Device status --> disable");
                     //PostDataService.flag = false;
                     BaseUploadService.cancel = true;
-                    sb_status.append("The device is now disabled.\n");
-                    sb_status.append("Stopping post datas...\n");
-                    sb_status.append("Stopped post datas...\n");
-                    tv_show.setText(sb_status);
+                    tv_show.append("The device is now disabled.\n"
+                            + "Stopping post datas...\n"
+                            + "Stopped post datas...\n");
                 }else if(null != datas.get("data")
                         && isOneOfOperations(datas)){
                     String operate = (String)datas.get("data");
+                    StringBuilder sb_status = new StringBuilder();
                     sb_status.append("The device will " + operate + ".\n");
                     if(Constants.OPERATION_RESTART.equals(operate)){
                         Log.i(TAG,"Device status --> restart");
@@ -196,31 +198,23 @@ public class LoadingDataActivity extends Activity implements View.OnClickListene
                         sb_status.append("The device already " + operate + "ed...\n");
                     }
                     Log.i(TAG,"Device status --> " + sb_status);
-                    tv_show.setText(sb_status);
+                    tv_show.append(sb_status);
                 }
 
             } else {
                 if (null != datas.get("data")) {
-                    /*if ("loadData".equals(checkDataIsJson(datas))
-                            || "fromNet".equals(checkDataIsJson(datas))) {
-                        sb_status.append("Loading datas...\n");
-                        tv_show.setText(sb_status);
-                    }else */
-                    if (null != datas.get("data")
-                            && isOneOfOperations(datas)) {
+                    Log.i(TAG, "checkDataIsJson(datas)-->" + checkDataIsJson(datas));
+                    if (isOneOfOperations(datas)) {
                             String state = datas.getString("data");
-                            sb_status.append("The device now is " + state + ".\n");
 
                             if(Constants.OPERATION_RESTART.equals(state)){
                                 showDialogRestartApp();
                                 Message msg_dialog = handler.obtainMessage(Constants.MSG_SHOW_DIALOG);
                                 handler.sendMessageDelayed(msg_dialog, 10000);
                             }
-                        sb_status.append(state + "ing...\n");
-                        tv_show.setText(sb_status);
+                        tv_show.append(state + "ing...\n");
                     }else if(null == checkDataIsJson(datas)){
-                        sb_status.append("Loading datas...\n");
-                        tv_show.setText(sb_status);
+                        tv_show.append("Loading datas...\n");
                         /*JSONObject returnDatas = new JSONObject(datas.get("data").toString());
                         Thread emptyDataThread = new Thread(new EmptyDataService(handler, returnDatas));
                         emptyDataThread.start();*/
@@ -259,7 +253,7 @@ public class LoadingDataActivity extends Activity implements View.OnClickListene
 
     private String checkDataIsJson(JSONObject s) {
         try {
-            JSONObject data = new JSONObject((String) s.get("data"));
+            JSONObject data = s.getJSONObject("data");
         } catch (JSONException e) {
             return "loadData";
         }catch (Exception a){
@@ -268,36 +262,31 @@ public class LoadingDataActivity extends Activity implements View.OnClickListene
         return null;
     }
 
-    private static StringBuilder sb_status = new StringBuilder();
     private static List<Map<String, Object>> mDataList;
     private static List<String> deviceIds = new ArrayList<String>();
     private void writeStatus(String data, String positionId) {
         String deviceID = null;
-
+        Log.i(TAG, "received datas -->" + data);
         try {
             JSONObject datas = new JSONObject(data);
             if (data.contains("Endpoint request timed out")) {
-                sb_status.append("The device is added timeout.\n");
-                tv_show.setText(sb_status);
+                tv_show.append("The device is added timeout.\n");
                 return;
             }
             //failed
             if ("0".equals(datas.getString("code"))) {
                 if (Constants.NO_TYPE.equals(datas.getString("data"))) {
-                    sb_status.append("The device type is deleted.\n");
-                    tv_show.setText(sb_status);
-                    sb_status.delete(0, sb_status.length());
+                    tv_show.append("The device type is deleted.\n");
+                    tv_show.setText("");
                     return;
                 }
             } else {
                 if (null != datas.get("data")
                         && Constants.ALREADY_EXIST.equals(datas.get("data"))) {
                     deviceID = (String) datas.get("description");
-                    sb_status.append("Device is attached to server already.\n");
-                    tv_show.setText(sb_status);
+                    tv_show.append("Device is attached to server already.\n");
                 } else if (null != datas.get("data")) {
-                    sb_status.append("Device is attached to server.\n");
-                    tv_show.setText(sb_status);
+                    tv_show.append("Device is attached to server.\n");
                     JSONObject jsonData =  new JSONObject(datas.get("data").toString());
                     deviceID = jsonData.getString(Constants.DEVICE_ID);
                     positionId = jsonData.getString(Constants.POSITION_ID);
@@ -323,7 +312,6 @@ public class LoadingDataActivity extends Activity implements View.OnClickListene
                 }
 
             }
-            Log.i(TAG, "sb_status -->" + sb_status);
 
         } catch (JSONException e) {
             Log.i(TAG, "exception when writeStatus -->" + e);

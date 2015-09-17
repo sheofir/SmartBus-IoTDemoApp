@@ -22,21 +22,21 @@ public class HttpsUtils {
     public static String requestHTTPSPage( URL url) throws Exception{
         String result = "can't get url datas";
         HttpURLConnection http = null;
-        // ÅÐ¶ÏÊÇhttpÇëÇó»¹ÊÇhttpsÇëÇó
+        // ï¿½Ð¶ï¿½ï¿½ï¿½httpï¿½ï¿½ï¿½ï¿½ï¿½ï¿½httpsï¿½ï¿½ï¿½ï¿½
         if (url.getProtocol().toLowerCase().equals("https")) {
             trustAllHosts();
             http = (HttpsURLConnection) url.openConnection();
-            ((HttpsURLConnection) http).setHostnameVerifier(new MyHostnameVerifier());// ²»½øÐÐÖ÷»úÃûÈ·ÈÏ
+            ((HttpsURLConnection) http).setHostnameVerifier(new MyHostnameVerifier());// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½
 
         } else {
             http = (HttpURLConnection) url.openConnection();
         }
-        http.setConnectTimeout(10000);// ÉèÖÃ³¬Ê±Ê±¼ä
+        http.setConnectTimeout(20000);// ï¿½ï¿½ï¿½Ã³ï¿½Ê±Ê±ï¿½ï¿½
         http.setReadTimeout(50000);
-        http.setRequestMethod("GET");// ÉèÖÃÇëÇóÀàÐÍÎª
+        http.setRequestMethod("GET");// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª
         http.setDoInput(true);
         http.setRequestProperty("Content-Type", "text/xml");
-        //http.getResponseCode());http»òhttps·µ»Ø×´Ì¬200»¹ÊÇ403
+        //http.getResponseCode());httpï¿½ï¿½httpsï¿½ï¿½ï¿½ï¿½×´Ì¬200ï¿½ï¿½ï¿½ï¿½403
         BufferedReader in = null;
         if (http.getResponseCode() == 200) {
             in = new BufferedReader(new InputStreamReader(
@@ -54,20 +54,20 @@ public class HttpsUtils {
     public static String requestPostHTTPSPage( URL url, String params) throws Exception{
         String result = "can't get url datas";
         HttpURLConnection http = null;
-        // ÅÐ¶ÏÊÇhttpÇëÇó»¹ÊÇhttpsÇëÇó
+        // ï¿½Ð¶ï¿½ï¿½ï¿½httpï¿½ï¿½ï¿½ï¿½ï¿½ï¿½httpsï¿½ï¿½ï¿½ï¿½
         if (url.getProtocol().toLowerCase().equals("https")) {
             trustAllHosts();
             http = (HttpsURLConnection) url.openConnection();
-            ((HttpsURLConnection) http).setHostnameVerifier(new MyHostnameVerifier());// ²»½øÐÐÖ÷»úÃûÈ·ÈÏ
+            ((HttpsURLConnection) http).setHostnameVerifier(new MyHostnameVerifier());// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½
 
         } else {
             http = (HttpURLConnection) url.openConnection();
         }
-        http.setConnectTimeout(10000);// ÉèÖÃ³¬Ê±Ê±¼ä
+        http.setConnectTimeout(20000);// ï¿½ï¿½ï¿½Ã³ï¿½Ê±Ê±ï¿½ï¿½
         http.setReadTimeout(50000);
-        http.setRequestMethod("POST");// ÉèÖÃÇëÇóÀàÐÍÎª
+        http.setRequestMethod("POST");// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª
         http.setDoInput(true);
-        //http.getResponseCode());http»òhttps·µ»Ø×´Ì¬200»¹ÊÇ403
+        //http.getResponseCode());httpï¿½ï¿½httpsï¿½ï¿½ï¿½ï¿½×´Ì¬200ï¿½ï¿½ï¿½ï¿½403
         PrintWriter pw = new PrintWriter(http.getOutputStream());
         pw.print(params);
         pw.flush();
@@ -87,11 +87,11 @@ public class HttpsUtils {
     }
 
     /**
-     * ÐÅÈÎËùÓÐÖ÷»ú-¶ÔÓÚÈÎºÎÖ¤Êé¶¼²»×ö¼ì²é
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½Ö¤ï¿½é¶¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      */
     private static void trustAllHosts() {
         // Create a trust manager that does not validate certificate chains
-        // Android ²ÉÓÃX509µÄÖ¤ÊéÐÅÏ¢»úÖÆ
+        // Android ï¿½ï¿½ï¿½ï¿½X509ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½
         // Install the all-trusting trust manager
         try {
             SSLContext sc = SSLContext.getInstance("TLS");
@@ -99,7 +99,7 @@ public class HttpsUtils {
             HttpsURLConnection
                     .setDefaultSSLSocketFactory(sc.getSocketFactory());
             // HttpsURLConnection.setDefaultHostnameVerifier(DO_NOT_VERIFY);//
-            // ²»½øÐÐÖ÷»úÃûÈ·ÈÏ
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½
         } catch (Exception e) {
             e.printStackTrace();
         }
