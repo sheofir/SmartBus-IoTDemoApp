@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <buslines>
 	<busline>
-		<linenum>328</linenum>
+		<linenum>29</linenum>
 		<starttime>6:00</starttime>
 		<endtime>23:00</endtime>
 		<price>8</price>
 		<isfavor>true</isfavor>
-		<favorstation>4</favorstation>
+		<favorstation>14</favorstation>
 		<stations>
 <station><id>1</id><name>东门</name><longitude>108.977843 </longitude><latitude>34.266265 </latitude><altitude>404.871144 </altitude><speed>46.292746 </speed><remaintime>59</remaintime></station>
 <station><id>2</id><name>大差市</name><longitude>108.970688 </longitude><latitude>34.265795 </latitude><altitude>411.472230 </altitude><speed>42.834149 </speed><remaintime>57</remaintime></station>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buslines>
 	<busline>
-		<linenum>328</linenum>
+		<linenum>29</linenum>
 		<starttime>6:00</starttime>
 		<endtime>23:00</endtime>
 		<price>8</price>
 		<isfavor>true</isfavor>
-		<favorstation>4</favorstation>
+		<favorstation>14</favorstation>
 		<stations>
 			<station>
 				<id>1</id>
