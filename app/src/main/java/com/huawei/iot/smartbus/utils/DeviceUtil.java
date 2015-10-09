@@ -89,25 +89,56 @@ public class DeviceUtil {
         }
         return datas;
     }
-    private static List<String> getNewDatas(Context context, String positionId){
+    
+        private static List<String> getNewDatas(Context context, String positionId){
         List<String> list = FileUtil.getFromFile(context, FileUtil.ASSET_FILE_DATAS);
         List<String> resultList = new ArrayList<String>();
         for (String s : list){
             String[] pDatas = s.split(",");
             String id = pDatas[0];
-            if(!id.contains("_")){
-                if(positionId.compareTo(id) <= 0){
-                    resultList.add(s);
-                }
-            }else{
-                String pId = id.split("_")[0];
-                if(positionId.compareTo(pId) <= 0){
-                    resultList.add(s);
-                }
+            if (comparePosition(positionId, id) <= 0)
+            {
+                resultList.add(s);
             }
+//            if(!id.contains("_")){
+//                if(compareTo(positionId,id) <= 0){
+//                    resultList.add(s);
+//                }
+//            }else{
+//                String pId = id.split("_")[0];
+//                if(compareTo(positionId,pId) <= 0){
+//                    resultList.add(s);
+//                }
+//            }
         }
         return resultList;
     }
+
+
+
+    private static int comparePosition(String l, String r)
+    {
+        Float lf = Float.valueOf(l.replace('_', '.'));
+        Float rf = Float.valueOf(r.replace('_', '.'));
+
+        return lf.compareTo(rf);
+    }
+//
+//    private static int compareTo(String num1, String num2)
+//    {
+//        if (num1.length() > num2.length())
+//        {
+//            return 1;
+//        }
+//
+//        if (num1.length() < num2.length())
+//        {
+//            return -1;
+//        }
+//
+//        return num1.compareTo(num2);
+//    }
+
     public static JSONObject fromPojo(Object object){
         Bus bus = (Bus) object;
         JSONObject jsonObject = new JSONObject();
