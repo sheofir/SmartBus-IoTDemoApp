@@ -98,6 +98,9 @@ public class DeviceUtil {
             String id = pDatas[0];
             if (comparePosition(positionId, id) <= 0)
             {
+                if ("1".equals(id)) {
+                    continue;
+                }
                 resultList.add(s);
             }
         }
