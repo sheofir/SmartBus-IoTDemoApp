@@ -46,7 +46,7 @@ public class BusUtil {
                 b.setRemainTime(remainTime);
             }
             String simID = deviceData.get(Constants.SIM_CARD_ID);
-            simID = simID + "_" + simIndex;
+            simID = simID + simIndex;
             b.setDeviceTypeId(deviceData.get(Constants.DEVICE_TYPE_ID));
             b.setMasterKey(deviceData.get(Constants.MASTER_KEY));
             b.setSimCardId(simID);

@@ -8,8 +8,11 @@ import android.telephony.TelephonyManager;
 public class SimUtil {
 
     public static String readSIMID(TelephonyManager telephonyManager){
-        if(telephonyManager.getLine1Number()!=null){
+        if (null != telephonyManager.getLine1Number()) {
             return telephonyManager.getLine1Number();
-        }else  return telephonyManager.getSimSerialNumber();
+        } else {
+            //read the default sim num
+            return "+8613910733521";
+        }
     }
 }
